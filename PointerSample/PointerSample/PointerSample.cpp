@@ -35,7 +35,7 @@
 //	printf("p = %8f [0x%08x]\n", *(double *)p, p);
 //
 //}
-char buf[100];
+char buf[2000];
 void MemoryDump(int start, int length);	// 함수의 원형 Proto-type
 
 int main(int argc, char *argv[])	// pointerSample 10000 500 : Command Line 명령어
