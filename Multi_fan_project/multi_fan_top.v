@@ -42,13 +42,16 @@ module multi_fan_top(
     wire [6:0] duty_speed;
     wire [15:0] distance_cm;
     reg duty_speed_en;
-    fan_led fan_l(.clk(clk), .reset_p(reset_p), .btn(led_change),  .duty(duty_led));
-    pwm_100 pwm_l(.clk(clk), .reset_p(reset_p), .duty(duty_led), .pwm_preq(10000), .pwm_100pc(led_r));
     
-    fan_speed fan_s(.clk(clk), .reset_p(reset_p), .btn(speed_change), .duty(duty_s));
-    pwm_100 pwm_s(.clk(clk), .reset_p(reset_p), .duty(duty_speed), .pwm_preq(100), .pwm_100pc(fan_motor));
-
+    wire timer_start, start_stop;
+    wire [15:0] value_timer;
+    
     fan_ultrasonic fan_sr04(.clk(clk), .reset_p(reset_p), .echo(echo), .trig(trig), .distance_cm(distance_cm));
+    fan_timer fan_time(.clk(clk), .reset_p(reset_p), .btn(time_change), .value(value_timer), .start_stop(start_stop), .timer_start(timer_start));
+    
+    fan_led fan_l(.clk(clk), .reset_p(reset_p), .btn(led_change),  .led_r(led_r));
+    fan_speed fan_m(.clk(clk), .reset_p(reset_p), .btn(speed_change), .duty(duty_s));
+    pwm_100 pwm_m(.clk(clk), .reset_p(reset_p), .duty(duty_speed), .pwm_preq(100), .pwm_100pc(fan_motor));
     
     always @(posedge clk or posedge reset_p) begin
       if(reset_p) duty_speed_en = 0;
@@ -66,11 +69,9 @@ module multi_fan_top(
     bin_to_dec b2d_tmpr(.bin({4'b0000, temperature}), .bcd(bcd_tmpr));
     wire [15:0] value_dht11;
     assign value_dht11 = {bcd_humi[7:0], bcd_tmpr[7:0]};
-
-    wire timer_start, start_stop;
-    wire [15:0] value_timer;
-    fan_timer fan_time(.clk(clk), .reset_p(reset_p), .btn(time_change), .value(value_timer), .start_stop(start_stop), .timer_start(timer_start));
+    
     assign duty_speed = duty_speed_en ? (~start_stop ? duty_s : 0) : 0; 
+    
     wire [15:0] value;
     assign value = ~timer_start ? value_dht11 : value_timer;
     

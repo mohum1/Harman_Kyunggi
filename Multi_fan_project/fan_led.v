@@ -23,13 +23,14 @@
 module fan_led(
     input clk, reset_p,
     input btn,
-    output reg [6:0] duty
+    output led_r
     );
     // duty 0 30 60 90
     
     wire [3:0] count_btn;
     fan_ring_counter ring_led(.clk(clk), .reset_p(reset_p), .btn(btn), .ring(count_btn));
-    
+    reg [6:0] duty;
+
     always @(posedge clk) begin
         case(count_btn)
             4'b0001: begin
@@ -46,6 +47,9 @@ module fan_led(
             end
         endcase
     end
+    
+    pwm_100 pwm_l(.clk(clk), .reset_p(reset_p), .duty(duty), .pwm_preq(10000), .pwm_100pc(led_r));
+
     
     
 endmodule

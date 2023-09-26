@@ -93,7 +93,7 @@ module fan_timer(
     assign timer_off = |{btn, reset_p};
     T_flip_flop_p tff_start(.clk(clk), .t(timeout_edge), .reset_p(timer_off), .q(start_stop));
   
-    assign clk_start = start_stop ? 0 : clk_min;
+    assign clk_start = start_stop ? 0 : clk_sec;
      
 endmodule
 

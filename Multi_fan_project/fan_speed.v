@@ -27,10 +27,8 @@ module fan_speed(
     );
     // duty 0 30 60 90
     
-    
      wire [3:0] count_btn;
     fan_ring_counter ring_led(.clk(clk), .reset_p(reset_p), .btn(btn), .ring(count_btn));
-    
     always @(posedge clk) begin
         case(count_btn)
             4'b0001: begin
@@ -47,5 +45,7 @@ module fan_speed(
             end
         endcase
     end    
+    
+//    pwm_100 pwm_m(.clk(clk), .reset_p(reset_p), .duty(duty), .pwm_preq(100), .pwm_100pc(fan_motor));
 
 endmodule
